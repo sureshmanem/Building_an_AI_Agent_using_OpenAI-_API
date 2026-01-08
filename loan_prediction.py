@@ -1,11 +1,27 @@
 import pandas as pd
-from openai import OpenAI
+from openai import OpenAI, AzureOpenAI
 from dotenv import load_dotenv
 import os
 
 load_dotenv()
 
-client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+# Check if using Azure OpenAI or regular OpenAI
+use_azure = os.getenv('USE_AZURE_OPENAI', 'false').lower() == 'true'
+
+if use_azure:
+    # Azure OpenAI configuration
+    client = AzureOpenAI(
+        api_key=os.getenv('AZURE_OPENAI_API_KEY'),
+        api_version=os.getenv('AZURE_OPENAI_API_VERSION', '2024-02-15-preview'),
+        azure_endpoint=os.getenv('AZURE_OPENAI_ENDPOINT')
+    )
+    model_name = os.getenv('AZURE_OPENAI_DEPLOYMENT_NAME', 'gpt-4')
+    print("Using Azure OpenAI Service")
+else:
+    # Regular OpenAI configuration
+    client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+    model_name = os.getenv('OPENAI_MODEL', 'gpt-4')
+    print("Using OpenAI Service")
 
 df = pd.read_csv('loan_prediction.csv')
 
@@ -70,7 +86,7 @@ def agent_ai(user_query, df):
     """
     
     response = client.chat.completions.create(
-        model="gpt-4",
+        model=model_name,
         messages=[
             {"role": "user", "content": prompt}
         ],

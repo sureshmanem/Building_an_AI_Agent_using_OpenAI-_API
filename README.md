@@ -54,10 +54,20 @@ The `loan_prediction.csv` file contains loan application data with the following
    ```
 
 3. **Set up environment variables**:
-   Create a `.env` file in the project root and add your OpenAI API key:
+   Copy the `.env.example` file to `.env` and configure your API credentials:
+   ```bash
+   cp .env.example .env
    ```
-   OPENAI_API_KEY=your_openai_api_key_here
-   ```
+   
+   Then edit `.env` with your actual credentials:
+   
+   **For OpenAI:**
+   - Set `USE_AZURE_OPENAI=false`
+   - Add your `OPENAI_API_KEY`
+   
+   **For Azure OpenAI:**
+   - Set `USE_AZURE_OPENAI=true`
+   - Add your `AZURE_OPENAI_API_KEY`, `AZURE_OPENAI_ENDPOINT`, and `AZURE_OPENAI_DEPLOYMENT_NAME`
 
 ## 💻 Usage
 
@@ -95,8 +105,19 @@ Type `exit` to quit the application.
 
 ## 🔑 API Configuration
 
-The agent uses OpenAI's GPT-4 model with the following configuration:
-- **Model**: gpt-4
+The agent supports both **OpenAI** and **Azure OpenAI** services.
+
+### OpenAI Configuration
+- **Model**: gpt-4 (configurable via `OPENAI_MODEL`)
+- **Authentication**: API Key
+
+### Azure OpenAI Configuration
+- **Model**: Configurable deployment name
+- **API Version**: 2024-02-15-preview (default)
+- **Authentication**: API Key + Endpoint
+- **Endpoint**: Your Azure OpenAI resource endpoint
+
+### Model Parameters
 - **Temperature**: 0.2 (for more focused, deterministic responses)
 - **Max Tokens**: 500 (controls response length)
 
